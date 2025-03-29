@@ -46,6 +46,11 @@ class UrbanRoutesPage:
     boton_siguiente_telefono = (By.CSS_SELECTOR, '.button.full')
     codigo = (By.ID, 'code')
     boton_confirmar_codigo = (By.XPATH, '//button[@type="submit" and text()="Confirmar"]')
+    metodo_de_pago = (By.CSS_SELECTOR, '.pp-button.filled')
+    agregar_tarjeta = (By.CLASS_NAME, 'pp-plus-container')
+    cvv = (By.CLASS_NAME, 'card-code-input')
+    numero_de_tarjeta = (By.CLASS_NAME, 'card-number-input')
+    confirmar_tarjeta = (By.XPATH, '//button[@type="submit" and text()="Agregar"]')
 
 
 
@@ -110,7 +115,7 @@ class UrbanRoutesPage:
         )
 
     def set_boton_siguiente_telefono(self):
-        self.get_boton_siguiente_telefono().click() #bien
+        self.get_boton_siguiente_telefono().click()
 
 
     def get_mensaje_codigo(self):
@@ -130,6 +135,44 @@ class UrbanRoutesPage:
     def set_boton_confirmar_codigo(self):
         self.get_boton_confirmar_codigo().click()
 
+    def get_metodo_de_pago(self):
+        return WebDriverWait(self.driver, 5).until(
+            expected_conditions.element_to_be_clickable(self.metodo_de_pago)
+        )
+
+    def set_metodo_de_pago(self):
+        self.get_metodo_de_pago().click()
+
+    def get_agregar_tarjeta(self):
+        return WebDriverWait(self.driver, 5).until(
+            expected_conditions.element_to_be_clickable(self.agregar_tarjeta)
+        )
+
+    def set_agregar_tarjeta(self):
+        self.get_agregar_tarjeta().click()
+
+
+    def get_cvv(self):
+        return WebDriverWait(self.driver, 5).until(
+        expected_conditions.element_to_be_clickable(self.cvv)
+        )
+
+    def set_cvv(self):
+        self.get_cvv().click()
+
+    def set_rellenar_cvv(self, card_code):
+        self.set_cvv()
+
+    def get_numero_de_tarjeta(self):
+        return WebDriverWait(self.driver, 5).until(
+        expected_conditions.element_to_be_clickable(self.numero_de_tarjeta)
+        )
+
+    def set_numero_de_tarjeta(self):
+        self.get_numero_de_tarjeta().click()
+
+    def set_rellenar_tarjeta(self, card_number):
+        self.set_numero_de_tarjeta()
 
 
 
@@ -163,16 +206,30 @@ class TestUrbanRoutes:
         routes_page.set_boton_pedir_taxi()
         routes_page.set_boton_comfort()
 
-
     def test_boton_telefono(self):
         self.test_boton_pedir_taxi()
         routes_page = UrbanRoutesPage(self.driver)
         routes_page.set_boton_telefono()
         telefono = data.phone_number
         routes_page.rellenar_telefono(telefono)
-        routes_page.set_boton_siguiente_telefono() #hasta aqui esta bien
+        routes_page.set_boton_siguiente_telefono()
         routes_page.set_mensaje_codigo(self)
         routes_page.set_boton_confirmar_codigo()
+
+    def test_metodo_de_pago(self):
+        self.test_boton_pedir_taxi()
+        routes_page = UrbanRoutesPage(self.driver)
+        routes_page.set_metodo_de_pago()
+        routes_page.set_agregar_tarjeta()
+        routes_page.set_cvv()
+        cvv = data.card_code
+        routes_page.set_rellenar_cvv(self)
+        routes_page.set_numero_de_tarjeta()
+        cvv = data.card_number
+        routes_page.set_rellenar_tarjeta(self)
+
+
+
 
 
 
