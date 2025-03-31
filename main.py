@@ -50,9 +50,12 @@ class UrbanRoutesPage:
     agregar_tarjeta = (By.CLASS_NAME, 'pp-plus-container')
     cvv = (By.CLASS_NAME, 'card-code-input')
     numero_de_tarjeta = (By.CLASS_NAME, 'card-number-input')
+    espacio_blanco = (By.CLASS_NAME, 'card-number-label')
     confirmar_tarjeta = (By.XPATH, '//button[@type="submit" and text()="Agregar"]')
-
-
+    campo_mensaje = (By.XPATH, '//*[@id="root"]/div/div[3]/div[3]/div[2]/div[2]/div[3]/div')
+    manta_pañuelos = (By.XPATH, '//*[@id="root"]/div/div[3]/div[3]/div[2]/div[2]/div[4]/div[2]/div[1]/div/div[2]/div/span')
+    helados = (By.XPATH, '//*[@id="root"]/div/div[3]/div[3]/div[2]/div[2]/div[4]/div[2]/div[3]/div/div[2]/div[1]/div/div[2]/div/div[3]')
+    modal_taxi =(By.XPATH, '//*[@id="root"]/div/div[3]/div[4]/button')
 
     def __init__(self, driver):
         self.driver = driver
@@ -103,7 +106,7 @@ class UrbanRoutesPage:
     def get_telefono(self):
         return self.driver.find_element(*self.telefono).get_property('value')
 
-    def set_telefono(self, telefono): #recomendo poner el webdriverwait, revisar que funcione hasta de enviarlo si no hacerlo como la linea 50
+    def set_telefono(self, telefono):
         self.driver.find_element(*self.telefono).send_keys(telefono)
 
     def rellenar_telefono(self, telefono):
@@ -174,8 +177,57 @@ class UrbanRoutesPage:
     def set_rellenar_tarjeta(self, card_number):
         self.set_numero_de_tarjeta()
 
+    def get_espacio_blanco(self):
+        return WebDriverWait(self.driver, 5).until(
+            expected_conditions.element_to_be_clickable(self.espacio_blanco)
+        )
 
+    def set_espacio_blanco(self):
+        self.get_espacio_blanco().click()
 
+    def get_confirmar_tarjeta(self):
+        return WebDriverWait(self.driver, 5).until(
+            expected_conditions.element_to_be_clickable(self.confirmar_tarjeta)
+        )
+
+    def set_confirmar_tarjeta(self):
+        self.get_confirmar_tarjeta().click()
+
+    def get_campo_mensaje(self):
+        return WebDriverWait(self.driver, 5).until(
+            expected_conditions.element_to_be_clickable(self.campo_mensaje)
+        )
+
+    def set_campo_mensaje(self):
+        self.get_campo_mensaje().click()
+
+    def set_rellenar_mensaje(self, message_for_driver):
+        self.set_campo_mensaje()
+
+    def get_manta_pañuelos(self):
+        return WebDriverWait(self.driver, 5).until(
+            expected_conditions.element_to_be_clickable(self.manta_pañuelos)
+        )
+
+    def set_manta_pañuelos(self):
+        self.get_manta_pañuelos().click()
+
+    def get_helados(self):
+        return WebDriverWait(self.driver, 5).until(
+            expected_conditions.element_to_be_clickable(self.helados)
+        )
+
+    def set_helados(self):
+        self.get_helados().click()
+        self.get_helados().click()
+
+    def get_modal_taxi(self):
+        return WebDriverWait(self.driver, 5).until(
+            expected_conditions.element_to_be_clickable(self.modal_taxi)
+        )
+
+    def set_modal_taxi(self):
+        self.get_modal_taxi().click()
 
 
 
@@ -223,10 +275,38 @@ class TestUrbanRoutes:
         routes_page.set_agregar_tarjeta()
         routes_page.set_cvv()
         cvv = data.card_code
-        routes_page.set_rellenar_cvv(self)
+        routes_page.set_rellenar_cvv(cvv)
         routes_page.set_numero_de_tarjeta()
-        cvv = data.card_number
-        routes_page.set_rellenar_tarjeta(self)
+        numero_de_tarjeta = data.card_number
+        routes_page.set_rellenar_tarjeta(numero_de_tarjeta)
+        routes_page.set_espacio_blanco()  # error
+        routes_page.set_confirmar_tarjeta()  # error
+
+    def test_mensaje_para_conductor(self):
+        self.test_boton_pedir_taxi()
+        routes_page = UrbanRoutesPage(self.driver)
+        routes_page.set_campo_mensaje()
+        campo_mensaje = data.message_for_driver
+        routes_page.set_rellenar_mensaje(campo_mensaje)
+
+    def test_manta_pañuelos(self):
+        self.test_boton_pedir_taxi()
+        routes_page = UrbanRoutesPage(self.driver)
+        routes_page.set_manta_pañuelos()
+
+    def test_helados(self):
+        self.test_boton_pedir_taxi()
+        routes_page = UrbanRoutesPage(self.driver)
+        routes_page.set_helados()
+
+    def test_modal_taxi(self):
+        self.test_boton_telefono()
+        self.test_metodo_de_pago()
+        self.test_mensaje_para_conductor()
+        self.test_manta_pañuelos()
+        self.test_helados()
+        routes_page = UrbanRoutesPage(self.driver)
+        routes_page.set_modal_taxi()
 
 
 
