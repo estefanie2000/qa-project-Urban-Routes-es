@@ -50,7 +50,6 @@ class UrbanRoutesPage:
     agregar_tarjeta = (By.CLASS_NAME, 'pp-plus-container')
     cvv = (By.CLASS_NAME, 'card-code-input')
     numero_de_tarjeta = (By.CLASS_NAME, 'card-number-input')
-    espacio_blanco = (By.CLASS_NAME, 'card-number-label')
     confirmar_tarjeta = (By.XPATH, '//button[@type="submit" and text()="Agregar"]')
     campo_mensaje = (By.XPATH, '//*[@id="root"]/div/div[3]/div[3]/div[2]/div[2]/div[3]/div')
     manta_pañuelos = (By.XPATH, '//*[@id="root"]/div/div[3]/div[3]/div[2]/div[2]/div[4]/div[2]/div[1]/div/div[2]/div/span')
@@ -177,13 +176,7 @@ class UrbanRoutesPage:
     def set_rellenar_tarjeta(self, card_number):
         self.set_numero_de_tarjeta()
 
-    def get_espacio_blanco(self):
-        return WebDriverWait(self.driver, 5).until(
-            expected_conditions.element_to_be_clickable(self.espacio_blanco)
-        )
 
-    def set_espacio_blanco(self):
-        self.get_espacio_blanco().click()
 
     def get_confirmar_tarjeta(self):
         return WebDriverWait(self.driver, 5).until(
@@ -258,6 +251,7 @@ class TestUrbanRoutes:
         routes_page.set_boton_pedir_taxi()
         routes_page.set_boton_comfort()
 
+
     def test_boton_telefono(self):
         self.test_boton_pedir_taxi()
         routes_page = UrbanRoutesPage(self.driver)
@@ -267,6 +261,8 @@ class TestUrbanRoutes:
         routes_page.set_boton_siguiente_telefono()
         routes_page.set_mensaje_codigo(self)
         routes_page.set_boton_confirmar_codigo()
+        assert routes_page.get_telefono () == data.phone_number
+
 
     def test_metodo_de_pago(self):
         self.test_boton_pedir_taxi()
@@ -279,8 +275,7 @@ class TestUrbanRoutes:
         routes_page.set_numero_de_tarjeta()
         numero_de_tarjeta = data.card_number
         routes_page.set_rellenar_tarjeta(numero_de_tarjeta)
-        routes_page.set_espacio_blanco()  # error
-        routes_page.set_confirmar_tarjeta()  # error
+        routes_page.set_confirmar_tarjeta()
 
     def test_mensaje_para_conductor(self):
         self.test_boton_pedir_taxi()
@@ -301,17 +296,11 @@ class TestUrbanRoutes:
 
     def test_modal_taxi(self):
         self.test_boton_telefono()
-        self.test_metodo_de_pago()
         self.test_mensaje_para_conductor()
         self.test_manta_pañuelos()
         self.test_helados()
         routes_page = UrbanRoutesPage(self.driver)
         routes_page.set_modal_taxi()
-
-
-
-
-
 
 
     @classmethod
