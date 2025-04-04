@@ -282,7 +282,7 @@ class TestUrbanRoutes:
         routes_page.set_rellenar_tarjeta(numero_de_tarjeta)
         routes_page.set_rellenar_cvv(data.card_code)
         routes_page.set_confirmar_tarjeta()
-
+        assert routes_page.get_cvv().get_attribute("value") == data.card_code
 
     def test_mensaje_para_conductor(self):
         self.test_boton_pedir_taxi()
@@ -290,18 +290,20 @@ class TestUrbanRoutes:
         routes_page.set_campo_mensaje()
         campo_mensaje = data.message_for_driver
         routes_page.set_rellenar_mensaje(campo_mensaje)
+        assert routes_page.get_campo_mensaje().is_displayed()
 
 
     def test_manta_pañuelos(self):
         self.test_boton_pedir_taxi()
         routes_page = UrbanRoutesPage(self.driver)
         routes_page.set_manta_pañuelos()
-
+        assert routes_page.get_manta_pañuelos().is_displayed()
 
     def test_helados(self):
         self.test_boton_pedir_taxi()
         routes_page = UrbanRoutesPage(self.driver)
         routes_page.set_helados()
+        assert routes_page.get_helados().is_displayed()
 
     def test_modal_taxi(self):
         self.test_boton_telefono()
@@ -310,7 +312,7 @@ class TestUrbanRoutes:
         self.test_helados()
         routes_page = UrbanRoutesPage(self.driver)
         routes_page.set_modal_taxi()
-
+        assert routes_page.get_modal_taxi().is_displayed()
 
     @classmethod
     def teardown_class(cls):
